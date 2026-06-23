@@ -17,7 +17,7 @@
 | Infra Nivel 2 (futuro) | [ ] repo Git privado + Claude Code + GitHub Action |
 | Backtesting | [OK] quantstats + skfolio HRP (notebooks/returns_risk.ipynb) |
 | Senales | [OK] regla ≤2 indicadores sobre observaciones distintas |
-| Codigo fetch/adjust/signals | [OK] research.ipynb (datos bajados) |
+| Codigo fetch/adjust/signals | [OK] research.ipynb — migrado de Colab a local: paths relativos (`find_repo_root()`), kernel `.venv`, sin `drive.mount()` |
 | Codigo returns/risk/backtest | [OK] returns_risk.ipynb (nuevo) |
 | Ticker intl-trend (RSIT) | [!] no figura en la familia Return Stacked actual |
 
