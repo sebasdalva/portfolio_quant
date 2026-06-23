@@ -1,0 +1,9 @@
+parameter,value,unit,notes
+risk_free_rate,0.02,annual,Conservador inicial. Actualizar con la tasa T-bill / cash IBKR.
+short_borrow_rate_default,0.01,annual,Costo de lending para shorts. Override por ticker con filas borrow_rate.<TICKER>.
+commission_per_trade,2,USD,Comision fija conservadora IBKR.
+slippage_bps,0,bps,Reservado. Subir si se ve friccion real en la ejecucion.
+borrow_rate.SPY,0.003,annual,Borrow tipico de un ETF muy liquido (ajustar con dato IBKR).
+borrow_rate.VEA,0.005,annual,Ajustar con dato IBKR.
+borrow_rate.VXUS,0.005,annual,Ajustar con dato IBKR.
+borrow_rate.VT,0.005,annual,Ajustar con dato IBKR.

@@ -1,0 +1,28 @@
+# Parametros de senales y rebalanceo. Pocos parametros (anti-overfitting).
+signals:
+  max_indicators: 2          # nunca mas de 2 simultaneos
+  rule: "indicadores sobre observaciones distintas (precio/volumen/volatilidad) para evitar colinealidad"
+  primary:
+    type: ma_cross           # el precio cruza por debajo de su media movil corta
+    ma_length: 15            # dias
+    apply_fraction: 0.16667  # 1/6 por rebalanceo
+    max_steps: 6             # 6/6 = hedge completo; el escalonado ~ salida MA90 sin latigazos
+  secondary_optional:
+    type: volatility_filter  # 2do indicador opcional (vol realizada vs su media)
+    enabled: false
+
+hedge:
+  do_not_liquidate_stacked: true
+  instruments:               # se shortea el ETF mas liquido y barato del sleeve
+    RSST: SPY
+    RSIT: VEA                # alternativa: VXUS
+    RSSB: VT
+  cash_park: BOXX
+
+rebalance:
+  equity_days: 14
+  commodity_days: 30
+  vary_day_hour: true        # robustez
+  override_allowed: true     # documentar en trade_log
+
+benchmark: "60/40"

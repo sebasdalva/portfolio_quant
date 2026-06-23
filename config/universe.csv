@@ -1,0 +1,43 @@
+ticker,name,category,asset_class,role,structure,provider,momentum_filtered,active,expense_ratio,hedge_for,notes
+SHY,iShares 1-3 Year Treasury,cash_tbill,bond,reference,vanilla,yahoo,no,yes,0.15,,proxy tasa corta / free rate 10y
+BOXX,Alpha Architect 1-3M Box,cash_tbill,cash,execution,vanilla,yahoo,no,yes,0.1949,,parking cash del hedge
+TLT,iShares 20+ Year Treasury,long_bond,bond,reference,vanilla,yahoo,no,yes,0.15,,duration larga
+IEF,iShares 7-10 Year Treasury,intermediate_bond,bond,reference,vanilla,yahoo,no,yes,0.15,,intermedio
+AGG,iShares Core US Aggregate Bond,us_agg,bond,reference,vanilla,yahoo,no,yes,0.03,,agg US
+LQD,iShares iBoxx IG Corporate,corporate_ig,credit,reference,vanilla,yahoo,no,yes,0.14,,corporativos IG
+HYG,iShares iBoxx HY Corporate,high_yield,credit,reference,vanilla,yahoo,no,yes,0.49,,high yield
+EMB,iShares JPM USD EM Bond,em_sov,credit,reference,vanilla,yahoo,no,yes,0.39,,EM soberano
+TIP,iShares TIPS Bond,tips,bond,reference,vanilla,yahoo,no,yes,0.19,,inflacion / TIPS
+PFF,iShares Preferred & Income,preferred,preferred,reference,vanilla,yahoo,no,yes,0.46,,preferred
+SPY,SPDR S&P 500,us_equity,equity,reference,vanilla,yahoo,yes,yes,0.0945,,US large / short / benchmark
+QQQ,Invesco QQQ Nasdaq 100,us_nasdaq,equity,reference,vanilla,yahoo,yes,no,0.20,,Nasdaq 100
+EFA,iShares MSCI EAFE,developed_exus,equity,reference,vanilla,yahoo,yes,yes,0.33,,developed ex-US
+VEA,Vanguard Developed Markets,developed_exus,equity,execution,vanilla,yahoo,yes,yes,0.05,,exec intl / short
+EEM,iShares MSCI Emerging Markets,emerging,equity,reference,vanilla,yahoo,yes,yes,0.70,,emerging markets
+VNQ,Vanguard Real Estate,reits,equity,reference,vanilla,yahoo,yes,yes,0.13,,REITs
+GLD,SPDR Gold Shares,gold,commodity,reference,vanilla,yahoo,yes,yes,0.40,,oro
+SLV,iShares Silver Trust,silver,commodity,reference,vanilla,yahoo,yes,yes,0.50,,plata
+USO,United States Oil Fund,oil,commodity,reference,vanilla,yahoo,yes,yes,0.60,,petroleo WTI (contango/roll)
+DBC,Invesco DB Commodity Index,commodity_broad,commodity,reference,vanilla,yahoo,yes,yes,0.85,,commodity broad
+DBMF,iMGP DBi Managed Futures,managed_futures,trend,reference,vanilla,yahoo,yes,yes,0.85,,CTA replication (SG CTA)
+BTC-USD,Bitcoin spot,bitcoin,crypto,reference,vanilla,yahoo,yes,yes,,,bitcoin historia larga
+VT,Vanguard Total World Stock,world_equity,equity,reference,vanilla,yahoo,yes,yes,0.06,,world ref / short RSSB
+RSST,Return Stacked US Stocks & Mgd Futures,stacked_us_trend,multi,execution,return_stacked,returnstacked,yes,yes,0.0107,,held; 1$ US eq + 1$ MF
+RSSB,Return Stacked Global Stocks & Bonds,stacked_world_bonds,multi,execution,return_stacked,returnstacked,yes,yes,0.0099,,held; 1$ eq global + 1$ UST
+VOO,Vanguard S&P 500,us_equity,equity,execution,vanilla,yahoo,yes,no,0.03,,alt US barato
+BIL,SPDR 1-3 Month T-Bill,cash_tbill,cash,reference,vanilla,yahoo,no,no,0.1356,,tbill puro
+VGLT,Vanguard Long-Term Treasury,long_bond,bond,execution,vanilla,yahoo,no,no,0.03,,alt long bond
+BND,Vanguard Total Bond Market,us_agg,bond,execution,vanilla,yahoo,no,no,0.03,,alt agg
+VCIT,Vanguard Interm Corporate,corporate_ig,credit,execution,vanilla,yahoo,no,no,0.04,,alt corporativo
+JNK,SPDR Bloomberg HY Bond,high_yield,credit,execution,vanilla,yahoo,no,no,0.40,,alt HY
+SCHP,Schwab US TIPS,tips,bond,execution,vanilla,yahoo,no,no,0.03,,alt TIPS
+PGX,Invesco Preferred,preferred,preferred,execution,vanilla,yahoo,no,no,0.50,,alt preferred
+VWO,Vanguard Emerging Markets,emerging,equity,execution,vanilla,yahoo,yes,no,0.08,,alt EM
+GLDM,SPDR Gold MiniShares,gold,commodity,execution,vanilla,yahoo,yes,no,0.10,,oro exec barato
+PDBC,Invesco Optimum Yield Commodity,commodity_broad,commodity,execution,vanilla,yahoo,yes,no,0.59,,alt broad sin K-1
+KMLM,KFA Mount Lucas Managed Futures,managed_futures,trend,reference,vanilla,yahoo,yes,no,0.90,,alt trend
+IBIT,iShares Bitcoin Trust,bitcoin,crypto,execution,vanilla,yahoo,yes,no,0.25,,btc exec liquido
+RSBT,Return Stacked Bonds & Mgd Futures,stacked_bonds_trend,multi,reference,return_stacked,returnstacked,yes,no,1.02,,1$ bonds + 1$ MF
+RSSY,Return Stacked US Stocks & Futures Yield,stacked_us_carry,multi,reference,return_stacked,returnstacked,yes,no,,,overlay carry
+RSSX,Return Stacked US Stocks & Gold/Bitcoin,stacked_us_goldbtc,multi,reference,return_stacked,returnstacked,yes,no,,,overlay oro/bitcoin
+BTGD,Quantify Stacked Bitcoin & Gold,stacked_gold_btc,multi,reference,return_stacked,quantify,yes,no,,,1$ oro + 1$ bitcoin
