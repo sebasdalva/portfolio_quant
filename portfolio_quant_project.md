@@ -1,25 +1,24 @@
-# Portfolio Balanceado — Proyecto Cuantitativo (v3)
+# Portfolio Balanceado — Proyecto Cuantitativo (v4)
 
-> Documento maestro. Leer primero al retomar. Estado: notebooks research + returns_risk operativos.
+> Documento maestro. Leer primero al retomar. Ver también `CLAUDE.md` para guía técnica de Claude Code.
 > Marcadores: [OK] decidido · [ ] pendiente · [!] a verificar
 
 ---
 
-## 0. Estado del proyecto
+## 0. Estado del proyecto (2026-06-24)
 
 | Area | Estado |
 |---|---|
-| Universo + tags | [OK] config/universe.csv |
-| Fuente de datos | [OK] Yahoo (HTTP directo), agnostico |
-| Almacenamiento | [OK] un CSV por ticker, OHLCV crudo + div + splits, append-only |
+| Universo + tags | [OK] config/universe.csv (24 tickers, 17 con datos completos) |
+| Fuente de datos | [OK] Yahoo Finance HTTP directo, sin yfinance, agnostico |
+| Almacenamiento | [OK] un CSV por ticker en data/prices/, append-only |
 | Costos/tasas | [OK] config/costs_rates.csv |
-| Infra Nivel 1 | [OK] carpeta Drive + Colab manual diario |
-| Infra Nivel 2 (futuro) | [ ] repo Git privado + Claude Code + GitHub Action |
-| Backtesting | [OK] quantstats + skfolio HRP (notebooks/returns_risk.ipynb) |
-| Senales | [OK] regla ≤2 indicadores sobre observaciones distintas |
-| Codigo fetch/adjust/signals | [OK] research.ipynb — migrado de Colab a local: paths relativos (`find_repo_root()`), kernel `.venv`, sin `drive.mount()` |
-| Codigo returns/risk/backtest | [OK] returns_risk.ipynb (nuevo) |
+| Infra | [OK] repo Git privado (GitHub) + Claude Code local + .venv (uv) |
+| Pipeline de datos | [OK] research.ipynb → prices_adjusted.csv |
+| Señales (5 estrategias) | [OK] signals.ipynb → data/signals/daily_returns_STRATXXX.csv |
+| Backtesting + reporte | [OK] backtest.ipynb → métricas IS/OOS + HTML en reports/ |
 | Ticker intl-trend (RSIT) | [!] no figura en la familia Return Stacked actual |
+| RSSB / RSST en panel | [!] faltantes en prices_adjusted.csv — datos no disponibles en Yahoo |
 
 ---
 
@@ -69,56 +68,65 @@ Defaults conservadores: rf 2%, short borrow 1%, comision $2/trade. Expense ratio
 - Anti-overfitting: fijar reglas antes del OOS; pocos parametros; cambios escasos.
 - Benchmark: SPY (60/40 como alternativa).
 
-## 7. Infraestructura — dos niveles
+## 7. Infraestructura
 
-- NIVEL 1 (ahora): carpeta Google Drive `portfolio_quant` con docs, configs y notebooks. Correr a mano a diario en Colab.
-- NIVEL 2 (futuro): Claude Code + repo Git privado + GitHub Action (cron). IBKR por MCP.
+Repo Git privado en GitHub (`sebasdalva/portfolio_quant`). Entorno local con `.venv` (uv). Claude Code como asistente principal.
 
-## 8. Estructura de la carpeta (Nivel 1, Drive)
+## 8. Estructura de la carpeta
 
 ```
 portfolio_quant/
-├── README.md
-├── portfolio_quant_project.md   # este doc — LEER PRIMERO
+├── CLAUDE.md                          ← guía técnica para Claude Code
+├── portfolio_quant_project.md         ← este doc
+├── pyproject.toml                     ← dependencias (uv)
 ├── config/
 │   ├── universe.csv
 │   ├── costs_rates.csv
 │   └── rules.yaml
-├── data/prices/<TICKER>.csv     # lo crea research.ipynb
-├── vendor/gauss314_skills/      # lo clona research.ipynb
+├── data/
+│   ├── prices/<TICKER>.csv            ← OHLCV crudo por ticker (append-only)
+│   ├── prices_adjusted.csv            ← panel ajustado (output de research)
+│   └── signals/
+│       ├── daily_returns_STRAT001.csv
+│       ├── ...
+│       └── sharpe_ratios_STRAT005.csv
+├── reports/
+│   └── backtest_report_YYYY-MM-DD.html
 └── notebooks/
-    ├── research.ipynb            # baja/actualiza datos, senales
-    ├── returns_risk.ipynb        # retornos, riesgo, backtest  ← NUEVO
-    ├── tearsheet_equal_weight.html  # output quantstats
-    └── tearsheet_momentum.html      # output quantstats
+    ├── research.ipynb    ← baja/actualiza precios, construye prices_adjusted.csv
+    ├── signals.ipynb     ← construye daily_returns_STRATXXX.csv por estrategia
+    ├── backtest.ipynb    ← métricas IS/OOS, gráficos, reporte HTML
+    └── old_*/            ← versiones archivadas (no usar)
 ```
 
 ## 9. Flujo de trabajo (notebooks)
 
 ### research.ipynb — correr primero
-1. Montar Drive.
-2. Clonar/actualizar vendor/gauss314_skills.
-3. Actualizar precios (append del cierre o backfill si CSV nuevo).
-4. Calcular senales de momentum.
+1. `find_repo_root()` para resolver paths.
+2. Leer `config/universe.csv` para saber qué tickers están activos.
+3. Descargar o actualizar cada ticker (append-only, `data/prices/<TICKER>.csv`).
+4. Construir `data/prices_adjusted.csv` (ajuste por dividendos y splits, método CRSP).
+5. Verificar integridad del panel (NaNs, cobertura por ticker).
 
-### returns_risk.ipynb — analisis
-Depende de que research.ipynb haya bajado los datos. Celdas en orden:
-1. Setup + mount Drive.
-2. `%pip install -q quantstats skfolio`
-3. Cargar CSVs y calcular adjusted close (funcion `load_adjusted`).
-4. Estadisticas descriptivas por activo (quantstats).
-5. Correlacion full + rolling 90d.
-6. Portfolio EW (proxy bloques moviles) vs SPY.
-7. Tearsheet HTML (quantstats) — se guarda en notebooks/.
-8. Backtest con filtro momentum MA90 gradual 1/6 (`run_momentum_backtest`).
-9. Curva de equity: Momentum overlay vs EW vs SPY.
-10. Tabla de metricas comparadas.
-11. Optimizacion HRP con skfolio.
-12. Tabla final: Momentum(EW) vs HRP vs EW vs SPY.
-13. Drawdown comparado.
-14. Sharpe rolling 252d.
-15. Atribucion anual por activo y por portfolio.
-16. Guardar tearsheet momentum HTML.
+### signals.ipynb — depende de research
+Auto-detecta `prices_adjusted.csv`. Genera una celda por estrategia:
+- STRAT001: Return Stacking + Hedge Gradual (MA gradual 1/6)
+- STRAT002: 60/40 SPY/AGG (benchmark, siempre largo)
+- STRAT003: Trend Following binario SPY (MA binaria)
+- STRAT004: Permanent Portfolio 25/25/25/25 (benchmark)
+- STRAT005: Dual Momentum cross-sectional (Sharpe ranking, top-5, filtro vs SHY)
+
+Para agregar STRAT006+: agregar celda en signals.ipynb y entrada en STRAT_LABELS de backtest.ipynb.
+
+### backtest.ipynb — depende de signals
+Auto-descubre todos los `data/signals/daily_returns_*.csv`. Produce:
+- Tabla IS/OOS: CAGR, Vol, Sharpe, Sortino, Calmar, MaxDD, Win%
+- Risk measures: VaR/CVaR 95/99, skewness, kurtosis
+- Retornos anuales por estrategia
+- Correlación entre estrategias (tabla + heatmap)
+- Equity curves + drawdown + rolling Sharpe (63d)
+- Deflated Sharpe Ratio (actualizar n_trials_total al re-testear)
+- Reporte HTML auto-contenido en `reports/`
 
 ## 10. Parametros clave del backtest (NO tocar sin deliberacion)
 
@@ -136,9 +144,13 @@ Preferred/corporativos deben calificar para cero retencion federal (portfolio in
 
 ## 12. Como retomar
 
-Leer: este .md -> config/universe.csv -> config/rules.yaml -> notebooks/research.ipynb -> notebooks/returns_risk.ipynb.
+```
+git clone https://github.com/sebasdalva/portfolio_quant.git
+cd portfolio_quant
+uv sync                    # instala dependencias desde pyproject.toml
+```
 
-Ruta de aprendizaje: (1) return stacking, (2) overlay de momentum 1/6, (3) almacenamiento crudo vs ajustado, (4) HRP/ERC con skfolio, (5) walk-forward CV, (6) pipeline diario.
+Leer: `CLAUDE.md` → este `.md` → `config/universe.csv` → `config/rules.yaml` → notebooks en orden.
 
 ## 13. Log de trades — formato
 
@@ -152,9 +164,9 @@ Nota: (override, evento macro)
 
 ## 14. Proximos pasos sugeridos
 
-- [ ] Correr returns_risk.ipynb y validar que los CSVs cargan bien.
-- [ ] Revisar tearsheet_momentum.html: comparar Max DD del overlay vs benchmark.
-- [ ] Experimentar con ERC (Equal Risk Contribution) en skfolio como alternativa a HRP.
-- [ ] Agregar walk-forward CV al backtest (gauss314 skill).
+- [ ] Correr backtest.ipynb completo y revisar el reporte HTML generado en reports/.
+- [ ] Resolver por qué RSSB/RSST no están disponibles en Yahoo Finance (ticker alternativo o fuente).
+- [ ] Agregar STRAT006: walk-forward CV sobre STRAT001 (gauss314 skill).
 - [ ] Resolver ticker RSIT — confirmar si existe o elegir sustituto.
-- [ ] Incorporar bloques fijos (TIP, HYG/EMB, PFF) con precio diario para atribucion completa.
+- [ ] Automatizar pipeline diario (GitHub Action o cron local).
+- [ ] Incorporar IBKR MCP para ejecución de señales en vivo.
